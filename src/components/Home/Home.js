@@ -1,28 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react';
 import useTShirts from '../../hooks/useTShirts';
 import Cart from '../Cart/Cart';
 import TShirt from '../TShirt/TShirt';
 import './Home.css';
-import { useState } from 'react';
 
 const Home = () => {
     const [tShirts, setTShirts] = useTShirts();
     const [cart, setCart] = useState([]);
 
-// 54-3 Recap Remove from cart and not allow duplicate : time: 01.43
+    const handleAddToCart = (selectedItem) => {
+        const exists = cart.find(tShirt => tShirt._id === selectedItem._id);
+        if (!exists) {
+            const newCart = [...cart, selectedItem];
+            setCart(newCart);
+        }else{
+            alert('items already selected')
+        }
+    }
+
+    const handeleRemoveFromCart = (selectedItem) => {
+        const rest = cart.filter(tShirt => tShirt._id !== selectedItem._id);
+        setCart(rest);
+    }
 
     return (
         <div className='home-container'>
             <div className="tshirt-container">
                 {
-                    tShirts.map(tShirt =><TShirt
-                        to={tShirt._id}
+                    tShirts.map(tShirt => <TShirt
+                        key={tShirt._id}
                         tShirt={tShirt}
+                        handleAddToCart={handleAddToCart}
                     ></TShirt>)
                 }
             </div>
             <div className="cart-container">
-                <Cart></Cart>
+                <Cart
+                    handeleRemoveFromCart={handeleRemoveFromCart}
+                    cart={cart}
+                ></Cart>
             </div>
         </div>
     );
